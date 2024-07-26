@@ -19,7 +19,7 @@ namespace Plaidman.LightenMyLoad.Menus {
 			}
 		}
 
-		public static HashSet<int> ShowPopup(InventoryItem[] options) {
+		public static int[] ShowPopup(InventoryItem[] options) {
 			var defaultSelected = 0;
 			var selectedItems = new HashSet<int>();
 			string[] itemLabels = new string[options.Length];
@@ -58,7 +58,7 @@ namespace Plaidman.LightenMyLoad.Menus {
 						return null;
 
 					case -2: // d drop items
-						return selectedItems;
+						return selectedItems.ToArray();
 
 					default:
 						break;

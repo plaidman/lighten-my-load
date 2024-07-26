@@ -118,14 +118,18 @@ namespace XRL.World.Parts {
 			}).ToArray();
 
 			var selected = ItemList.ShowPopup(itemList);
-			if (selected == null || selected.Count == 0) {
+			if (selected == null || selected.Length == 0) {
 				Messages.MessageQueue.AddPlayerMessage("no items selected");
 				return;
 			}
+			
+			if (selected.Length == 1) {
+				var index = selected[0];
+				InventoryActionEvent.Check(ParentObject, ParentObject, objects[index], "CommandDropObject");
+			}
 
-			Messages.MessageQueue.AddPlayerMessage("selected: ");
 			foreach (var item in selected) {
-				Messages.MessageQueue.AddPlayerMessage(" - " + objects[item].DisplayName);
+				InventoryActionEvent.Check(ParentObject, ParentObject, objects[item], "CommandDropAllObject");
 			}
 		}
 	}
