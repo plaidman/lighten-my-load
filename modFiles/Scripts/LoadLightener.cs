@@ -1,13 +1,14 @@
 using System;
 using System.Collections.Generic;
 using XRL.UI;
+using Plaidman.LightenMyLoad.Menus;
+using System.Linq;
 
 // TODOs
-// show list of all inventory items
-// show weight in list
-// sort list by weight OF EACH ITEM
-// 
 // drop selected items
+//
+// show weight in list
+// sort list by individual weight
 //
 // calculate sell value for items
 // exclude yellow items from calculation
@@ -111,14 +112,21 @@ namespace XRL.World.Parts {
 		}
 		
 		private void ListItems() {
-			var message = "known items:\n";
-			foreach (var item in KnownItems) {
-				message += item + "\n";
-			}
-			
-			message += "(end " + KnownItems.Count + ")";
+			var objects = ParentObject.Inventory.GetObjects();
+			var itemList = objects.Select((go, i) => {
+				return new ItemList.InventoryItem(i, go);
+			}).ToArray();
 
-			Popup.Show(message);
+			var selected = ItemList.ShowPopup(itemList);
+			if (selected == null || selected.Count == 0) {
+				Messages.MessageQueue.AddPlayerMessage("no items selected");
+				return;
+			}
+
+			Messages.MessageQueue.AddPlayerMessage("selected: ");
+			foreach (var item in selected) {
+				Messages.MessageQueue.AddPlayerMessage(" - " + objects[item].DisplayName);
+			}
 		}
 	}
 }
