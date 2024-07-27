@@ -5,15 +5,14 @@ using Plaidman.LightenMyLoad.Menus;
 using System.Linq;
 
 // TODOs
-// calculate sell value for items
-// exclude yellow items from calculation
 // generate ratio label
+// show questionmark as ratio label if not in known items list
 // show ratio label in list
 // sort item list by value ratio
-// show questionmark as ratio label if not in known items list
 // 
 // key to change sort mode in list
-// adjust weight display to uniform width
+// adjust weight/ratio display to uniform width
+//   - is this possible?
 //
 // create skill
 // show all ratio labels if you have the skill

@@ -12,23 +12,49 @@ namespace Plaidman.LightenMyLoad.Menus {
 		public class InventoryItem {
 			public int Index { get; }
 			public string DisplayName { get; }
-			public int? Weight { get; }
 			public IRenderable Icon { get; }
+			public int? Weight { get; }
+			public double? Value { get; }
 
 			public InventoryItem(int index, GameObject go) {
 				Index = index;
 				DisplayName = go.DisplayName;
 				Icon = go.Render;
 				Weight = go.GetPart<Physics>()?.Weight ?? null;
+				Value = GetValue(go);
 			}
+		}
+		
+		private static double? GetValue(GameObject go) {
+			var value = go.GetPart<Commerce>()?.Value ?? null;
+			if (value == null) {
+				return null;
+			}
+
+			var multiple = GetMultiple(go);
+			return value * multiple;
+		}
+		
+		private static double GetMultiple(GameObject go) {
+			if (go.IsCurrency) {
+				return 1.0;
+			}
+
+			// subtract 0.21 (3 * 0.07) because the player's reputation with themself is uncommonly high
+			return GetTradePerformanceEvent.GetFor(The.Player, The.Player) - 0.21;
 		}
 		
 		private static string GetItemLabel(bool selected, InventoryItem item) {
 			var label = GetSelectionLabel(selected) + " ";
-			label += GetWeightLabel(item) + " ";
+			// label += GetWeightLabel(item) + " ";
+			label += GetValueLabel(item) + " ";
 			label += item.DisplayName;
 			
 			return label;
+		}
+		
+		private static string GetValueLabel(InventoryItem item) {
+			return item.Value.ToString();
 		}
 		
 		private static string GetWeightLabel(InventoryItem item) {
@@ -62,7 +88,7 @@ namespace Plaidman.LightenMyLoad.Menus {
 			var weightSelected = 0;
 			var selectedItems = new HashSet<int>();
 			
-			var sortedOptions = options.OrderByDescending((item) => { return item.Weight; }).ToArray();
+			var sortedOptions = options.OrderByDescending((item) => { return item.Weight ?? 0; }).ToArray();
 			IRenderable[] itemIcons = sortedOptions.Select((item) => { return item.Icon; }).ToArray();
 			string[] itemLabels = sortedOptions.Select((item) => {
 				var selected = selectedItems.Contains(item.Index);
