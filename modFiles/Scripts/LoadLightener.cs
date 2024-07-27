@@ -5,9 +5,8 @@ using Plaidman.LightenMyLoad.Menus;
 using System.Linq;
 
 // TODOs
-// drop selected items
-//
-// show weight in list
+// adjust weight display to 3 characters wide
+// list current total selected weight and current weight capacity in description
 // sort list by individual weight
 //
 // calculate sell value for items
