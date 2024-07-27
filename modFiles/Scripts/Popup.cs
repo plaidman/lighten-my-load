@@ -31,17 +31,12 @@ namespace Plaidman.LightenMyLoad.Menus {
 				return null;
 			}
 
-			var multiple = GetMultiple(go);
-			return value * multiple;
-		}
-		
-		private static double GetMultiple(GameObject go) {
-			if (go.IsCurrency) {
-				return 1.0;
+			var multiple = 1.0;
+			if (!go.IsCurrency) {
+				// subtract 0.21 (3 * 0.07) because the player's reputation with themself is uncommonly high
+				multiple = GetTradePerformanceEvent.GetFor(The.Player, The.Player) - 0.21;
 			}
-
-			// subtract 0.21 (3 * 0.07) because the player's reputation with themself is uncommonly high
-			return GetTradePerformanceEvent.GetFor(The.Player, The.Player) - 0.21;
+			return value * multiple;
 		}
 		
 		private static string GetItemLabel(bool selected, InventoryItem item) {
@@ -61,7 +56,7 @@ namespace Plaidman.LightenMyLoad.Menus {
 			var weight = item.Weight;
 			
 			if (weight == null) {
-				return "{{W||???#|}}";
+				return "{{W||??#|}}";
 			}
 			
 			if (weight > 999) {
@@ -82,7 +77,7 @@ namespace Plaidman.LightenMyLoad.Menus {
 
 			return "{{y|[ ]}}";
 		}
-
+		
 		public static int[] ShowPopup(InventoryItem[] options) {
 			var defaultSelected = 0;
 			var weightSelected = 0;
