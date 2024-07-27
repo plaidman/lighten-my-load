@@ -5,8 +5,6 @@ using Plaidman.LightenMyLoad.Menus;
 using System.Linq;
 
 // TODOs
-// adjust weight display to 3 characters wide
-// list current total selected weight and current weight capacity in description
 // sort list by individual weight
 //
 // calculate sell value for items
@@ -17,6 +15,7 @@ using System.Linq;
 // show questionmark as ratio label if not in known items list
 // 
 // key to change sort mode in list
+// adjust weight display to uniform width
 //
 // create skill
 // show all ratio labels if you have the skill

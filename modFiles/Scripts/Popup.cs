@@ -23,8 +23,8 @@ namespace Plaidman.LightenMyLoad.Menus {
 		}
 		
 		private static string GetItemLabel(bool selected, InventoryItem item) {
-			var label = GetSelectionLabel(selected) + "  ";
-			label += GetWeightLabel(item) + "  ";
+			var label = GetSelectionLabel(selected) + " ";
+			label += GetWeightLabel(item) + " ";
 			label += item.DisplayName;
 			
 			return label;
@@ -41,7 +41,11 @@ namespace Plaidman.LightenMyLoad.Menus {
 				return "{{W||999+|}}";
 			}
 
-			return "{{W||" + item.Weight + "#|}}";
+			if (weight < -99) {
+				return "{{W||-99+|}}";
+			}
+
+			return "{{W||" + weight + "#|}}";
 		}
 		
 		private static string GetSelectionLabel(bool selected) {
@@ -54,6 +58,7 @@ namespace Plaidman.LightenMyLoad.Menus {
 
 		public static int[] ShowPopup(InventoryItem[] options) {
 			var defaultSelected = 0;
+			var weightSelected = 0;
 			var selectedItems = new HashSet<int>();
 			string[] itemLabels = new string[options.Length];
 			IRenderable[] itemIcons = options.Select((item) => { return item.Icon; }).ToArray();
@@ -71,10 +76,13 @@ namespace Plaidman.LightenMyLoad.Menus {
 				for (int i = 0; i < itemLabels.Length; i++) {
 					itemLabels[i] = GetItemLabel(selectedItems.Contains(i), options[i]);
 				}
+				
+				var intro = "Mark items here, press 'd' to drop them.\n";
+				intro += "Weight selected: {{W|" + weightSelected + "#}}\n\n";
 
 				int selectedIndex = Popup.PickOption(
 					Title: "Inventory Items",
-					Intro: "Mark items here, press 'd' to drop them.\n\n",
+					Intro: intro,
 					IntroIcon: null,
 					Options: itemLabels,
 					RespectOptionNewlines: false,
@@ -97,8 +105,10 @@ namespace Plaidman.LightenMyLoad.Menus {
 
 				if (selectedItems.Contains(selectedIndex)) {
 					selectedItems.Remove(selectedIndex);
+					weightSelected -= options[selectedIndex].Weight ?? 0;
 				} else {
 					selectedItems.Add(selectedIndex);
+					weightSelected += options[selectedIndex].Weight ?? 0;
 				}
 
 				defaultSelected = selectedIndex;
