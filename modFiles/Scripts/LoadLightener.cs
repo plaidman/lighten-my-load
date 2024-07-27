@@ -5,8 +5,6 @@ using Plaidman.LightenMyLoad.Menus;
 using System.Linq;
 
 // TODOs
-// sort list by individual weight
-//
 // calculate sell value for items
 // exclude yellow items from calculation
 // generate ratio label

@@ -5,6 +5,7 @@ using Qud.UI;
 using ConsoleLib.Console;
 using XRL.World;
 using XRL.World.Parts;
+using XRL;
 
 namespace Plaidman.LightenMyLoad.Menus {
 	public class ItemList {
@@ -60,8 +61,13 @@ namespace Plaidman.LightenMyLoad.Menus {
 			var defaultSelected = 0;
 			var weightSelected = 0;
 			var selectedItems = new HashSet<int>();
-			string[] itemLabels = new string[options.Length];
-			IRenderable[] itemIcons = options.Select((item) => { return item.Icon; }).ToArray();
+			
+			var sortedOptions = options.OrderByDescending((item) => { return item.Weight; }).ToArray();
+			IRenderable[] itemIcons = sortedOptions.Select((item) => { return item.Icon; }).ToArray();
+			string[] itemLabels = sortedOptions.Select((item) => {
+				var selected = selectedItems.Contains(item.Index);
+				return GetItemLabel(selected, item);
+			}).ToArray();
 
 			QudMenuItem[] menuCommands = new QudMenuItem[1]
 			{
@@ -73,10 +79,6 @@ namespace Plaidman.LightenMyLoad.Menus {
 			};
 
 			while (true) {
-				for (int i = 0; i < itemLabels.Length; i++) {
-					itemLabels[i] = GetItemLabel(selectedItems.Contains(i), options[i]);
-				}
-				
 				var intro = "Mark items here, press 'd' to drop them.\n";
 				intro += "Weight selected: {{W|" + weightSelected + "#}}\n\n";
 
@@ -103,12 +105,15 @@ namespace Plaidman.LightenMyLoad.Menus {
 						break;
 				}
 
-				if (selectedItems.Contains(selectedIndex)) {
-					selectedItems.Remove(selectedIndex);
-					weightSelected -= options[selectedIndex].Weight ?? 0;
+				var mappedItem = sortedOptions[selectedIndex];
+				if (selectedItems.Contains(mappedItem.Index)) {
+					selectedItems.Remove(mappedItem.Index);
+					weightSelected -= mappedItem.Weight ?? 0;
+					itemLabels[selectedIndex] = GetItemLabel(false, mappedItem);
 				} else {
-					selectedItems.Add(selectedIndex);
-					weightSelected += options[selectedIndex].Weight ?? 0;
+					selectedItems.Add(mappedItem.Index);
+					weightSelected += mappedItem.Weight ?? 0;
+					itemLabels[selectedIndex] = GetItemLabel(true, mappedItem);
 				}
 
 				defaultSelected = selectedIndex;
