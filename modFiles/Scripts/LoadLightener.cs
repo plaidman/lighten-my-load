@@ -7,9 +7,6 @@ using System.Linq;
 // TODOs
 // create skill
 // show all ratio labels if you have the skill
-// figure out how to check if PKAPP skill
-// show all values if you have PKAPP skill
-// remove auto-known torch in constructor
 //
 // adjust weight/ratio display to uniform width
 //   - is this possible?
@@ -114,6 +111,10 @@ namespace XRL.World.Parts {
 		
 		private bool IsKnown(GameObject go) {
 			if (Options.GetOption(ShowValueOption) == "Yes") {
+				return true;
+			}
+			
+			if (ParentObject.HasSkill("PKAPP_Price")) {
 				return true;
 			}
 
