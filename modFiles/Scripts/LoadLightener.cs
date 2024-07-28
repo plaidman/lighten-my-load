@@ -5,13 +5,11 @@ using Plaidman.LightenMyLoad.Menus;
 using System.Linq;
 
 // TODOs
-// option for preferred sort type
-//
+// always know if option is set
 // create skill
 // show all ratio labels if you have the skill
 // figure out how to check if PKAPP skill
 // show all values if you have PKAPP skill
-// always know if option is set
 // remove auto-known torch in constructor
 //
 // adjust weight/ratio display to uniform width
@@ -23,13 +21,21 @@ namespace XRL.World.Parts {
 		public static readonly string ItemListCommand = "Plaidman_LightenMyLoad_Command_ShowItemList";
 		public static readonly string UninstallCommand = "Plaidman_LightenMyLoad_Command_Uninstall";
 		public static readonly string ShowValueOption = "Plaidman_LightenMyLoad_Option_AlwaysShowValue";
+		public static readonly string PreferredSortOption = "Plaidman_LightenMyLoad_Option_PreferredSort";
 		public static readonly string AbilityOption = "Plaidman_LightenMyLoad_Option_UseAbility";
 		public Guid AbilityGuid;
 		public HashSet<string> KnownItems = new(50);
-		public ItemListPopup.SortType CurrentSortType = ItemListPopup.SortType.Value;
+		public ItemListPopup.SortType CurrentSortType = DefaultSortType();
+
 		[NonSerialized]
 		public ItemListPopup ItemPopup = new();
-		
+
+		private static ItemListPopup.SortType DefaultSortType() {
+			return Options.GetOption(PreferredSortOption) == "Value"
+				? ItemListPopup.SortType.Value
+				: ItemListPopup.SortType.Weight;		
+		}
+
 		public override void Register(GameObject go, IEventRegistrar registrar) {
 			registrar.Register(CommandEvent.ID);
 			registrar.Register(AfterPlayerBodyChangeEvent.ID);
