@@ -5,8 +5,11 @@ using Plaidman.LightenMyLoad.Menus;
 using System.Linq;
 
 // TODOs
-// show questionmark as ratio label if not in known items list
 // sort item list by value ratio
+//  - known items first by ratio
+//  - unknown items next by weight
+//  - zero weight next
+//  - unsellable last
 // 
 // key to change sort mode in list
 // adjust weight/ratio display to uniform width
@@ -16,6 +19,7 @@ using System.Linq;
 // show all ratio labels if you have the skill
 // figure out how to check if PKAPP skill
 // show all values if you have PKAPP skill
+// always know if option is set
 
 namespace XRL.World.Parts {
 	[Serializable]
@@ -104,10 +108,14 @@ namespace XRL.World.Parts {
 			return base.HandleEvent(e);
 		}
 		
+		private bool IsKnown(GameObject go) {
+			return KnownItems.Contains(go.BaseDisplayName);
+		}
+		
 		private void ListItems() {
 			var objects = ParentObject.Inventory.GetObjects();
 			var itemList = objects.Select((go, i) => {
-				return new ItemList.InventoryItem(i, go);
+				return new InventoryItem(i, go, IsKnown(go));
 			}).ToArray();
 
 			var selected = ItemList.ShowPopup(itemList);
