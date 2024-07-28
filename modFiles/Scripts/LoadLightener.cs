@@ -5,9 +5,7 @@ using Plaidman.LightenMyLoad.Menus;
 using System.Linq;
 
 // TODOs
-// key to change sort mode in list
-// adjust weight/ratio display to uniform width
-//   - is this possible?
+// save most recent sort selection
 //
 // create skill
 // show all ratio labels if you have the skill
@@ -15,6 +13,9 @@ using System.Linq;
 // show all values if you have PKAPP skill
 // always know if option is set
 // remove auto-known torch in constructor
+//
+// adjust weight/ratio display to uniform width
+//   - is this possible?
 
 namespace XRL.World.Parts {
 	[Serializable]
@@ -25,10 +26,12 @@ namespace XRL.World.Parts {
 		public static readonly string AbilityOption = "Plaidman_LightenMyLoad_Option_UseAbility";
 		public Guid AbilityGuid;
 		public HashSet<string> KnownItems;
+		public bool SortByWeight;
 		
 		public LML_LoadLightener() {
 			KnownItems = new(50);
 			KnownItems.Add("torch");
+			SortByWeight = false;
 		}
 
 		public override void Register(GameObject go, IEventRegistrar registrar) {
@@ -118,7 +121,7 @@ namespace XRL.World.Parts {
 				return new InventoryItem(i, go, IsKnown(go));
 			}).ToArray();
 
-			var selected = ItemList.ShowPopup(itemList);
+			var selected = ItemList.ShowPopup(itemList, SortByWeight);
 			if (selected == null || selected.Length == 0) {
 				Messages.MessageQueue.AddPlayerMessage("no items selected");
 				return;
