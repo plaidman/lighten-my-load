@@ -5,8 +5,8 @@ using Plaidman.LightenMyLoad.Menus;
 using System.Linq;
 
 // TODOs
-// add merchant's items to known items
 // zero weight items might have unknown value. figure out how best to sort it
+// display unknown items with zero weight as blue with 0#
 // 
 // key to change sort mode in list
 // adjust weight/ratio display to uniform width
@@ -17,6 +17,7 @@ using System.Linq;
 // figure out how to check if PKAPP skill
 // show all values if you have PKAPP skill
 // always know if option is set
+// remove auto-known torch in constructor
 
 namespace XRL.World.Parts {
 	[Serializable]
@@ -30,6 +31,7 @@ namespace XRL.World.Parts {
 		
 		public LML_LoadLightener() {
 			KnownItems = new(50);
+			KnownItems.Add("torch");
 		}
 
 		public override void Register(GameObject go, IEventRegistrar registrar) {
@@ -69,7 +71,11 @@ namespace XRL.World.Parts {
 				return base.HandleEvent(e);
 			}
 			
-			foreach (var item in ParentObject.Inventory.GetObjects()) {
+			foreach (var item in e.Actor.Inventory.GetObjects()) {
+				KnownItems.Add(item.BaseDisplayName);
+			}
+
+			foreach (var item in e.Trader.Inventory.GetObjects()) {
 				KnownItems.Add(item.BaseDisplayName);
 			}
 
