@@ -8,9 +8,9 @@ using XRL;
 namespace Plaidman.LightenMyLoad.Menus {
 	public class ItemList {
 		private static string GetItemLabel(bool selected, InventoryItem item) {
-			var label = PopupUtils.GetSelectionLabel(selected) + " ";
-			// label += PopupUtils.GetWeightLabel(item) + " ";
-			label += PopupUtils.GetValueLabel(item) + " ";
+			var label = PopupLabelUtils.GetSelectionLabel(selected) + " ";
+			// label += PopupLabelUtils.GetWeightLabel(item) + " ";
+			label += PopupLabelUtils.GetValueLabel(item) + " ";
 			label += item.DisplayName;
 			
 			return label;

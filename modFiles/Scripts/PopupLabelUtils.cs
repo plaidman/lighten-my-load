@@ -1,23 +1,8 @@
 namespace Plaidman.LightenMyLoad.Menus {
-    class PopupUtils {
-		public static double? GetValueRatio(InventoryItem item) {
-			var weight = item.Weight;
-			var value = item.Value;
-
-			if (value == null || value <= 0) {
-				// not sellable (includes fresh water containers)
-				return null;
-			}
-			
-			if (weight <= 0) {
-				return double.PositiveInfinity;
-			}
-
-			return (double)(value / weight);
-		}
+    class PopupLabelUtils {
 		
 		public static string GetValueLabel(InventoryItem item) {
-			var ratio = GetValueRatio(item);
+			var ratio = item.Ratio;
 			
 			if (ratio == null) {
 				// not sellable: grey
