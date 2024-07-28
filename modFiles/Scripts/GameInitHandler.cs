@@ -1,4 +1,4 @@
-﻿using XRL;
+using XRL;
 using XRL.World;
 using XRL.World.Parts;
 

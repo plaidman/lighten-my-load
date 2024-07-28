@@ -35,12 +35,12 @@ namespace XRL.World.Parts {
 			KnownItems = new(50);
 		}
 
-        public override void Register(GameObject go, IEventRegistrar registrar) {
+		public override void Register(GameObject go, IEventRegistrar registrar) {
 			registrar.Register(CommandEvent.ID);
 			registrar.Register(AfterPlayerBodyChangeEvent.ID);
 			registrar.Register(StartTradeEvent.ID);
-            base.Register(go, registrar);
-        }
+			base.Register(go, registrar);
+		}
 
 		public void ToggleAbility() {
 			if (Options.GetOption(AbilityOption) == "Yes") {
@@ -64,10 +64,10 @@ namespace XRL.World.Parts {
 
 		public override bool HandleEvent(AfterPlayerBodyChangeEvent e) {
 			ToggleAbility();
-            return base.HandleEvent(e);
-        }
+			return base.HandleEvent(e);
+		}
 
-        public override bool HandleEvent(StartTradeEvent e) {
+		public override bool HandleEvent(StartTradeEvent e) {
 			if (!e.Trader.IsCreature) {
 				return base.HandleEvent(e);
 			}
@@ -77,7 +77,7 @@ namespace XRL.World.Parts {
 			}
 
 			return base.HandleEvent(e);
-        }
+		}
 
 		private void UninstallParts() {
 			if (Popup.ShowYesNo("Are you sure you want to uninstall {{W|Lighten My Load}}?") == DialogResult.No) {
@@ -96,7 +96,7 @@ namespace XRL.World.Parts {
 			Popup.Show("Finished removing {{W|Lighten My Load}}. Please save and quit, then you can remove this mod.");
 		}
 
-        public override bool HandleEvent(CommandEvent e) {
+		public override bool HandleEvent(CommandEvent e) {
 			if (e.Command == ItemListCommand) {
 				ListItems();
 			}

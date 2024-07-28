@@ -1,5 +1,5 @@
 namespace Plaidman.LightenMyLoad.Menus {
-    class PopupLabelUtils {
+	class PopupLabelUtils {
 		
 		public static string GetValueLabel(InventoryItem item) {
 			var ratio = item.Ratio;
@@ -65,6 +65,5 @@ namespace Plaidman.LightenMyLoad.Menus {
 
 			return "{{y|[ ]}}";
 		}
-        
-    }
+	}
 }
