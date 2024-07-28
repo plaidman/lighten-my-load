@@ -21,7 +21,8 @@ namespace Plaidman.LightenMyLoad.Menus {
 			var weightSelected = 0;
 			var selectedItems = new HashSet<int>();
 			
-			options.Sort(new WeightComparer());
+			// options.Sort(new WeightComparer());
+			options.Sort(new ValueComparer());
 			IRenderable[] itemIcons = options.Select((item) => { return item.Icon; }).ToArray();
 			string[] itemLabels = options.Select((item) => {
 				var selected = selectedItems.Contains(item.Index);

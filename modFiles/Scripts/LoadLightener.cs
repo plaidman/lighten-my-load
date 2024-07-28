@@ -5,11 +5,8 @@ using Plaidman.LightenMyLoad.Menus;
 using System.Linq;
 
 // TODOs
-// sort item list by value ratio
-//  - known items first by ratio
-//  - unknown items next by weight
-//  - zero weight next
-//  - unsellable last
+// add merchant's items to known items
+// zero weight items might have unknown value. figure out how best to sort it
 // 
 // key to change sort mode in list
 // adjust weight/ratio display to uniform width
