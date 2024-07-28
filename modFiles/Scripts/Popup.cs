@@ -26,16 +26,18 @@ namespace Plaidman.LightenMyLoad.Menus {
 		}
 		
 		private static double? GetValue(GameObject go) {
-			var value = go.GetPart<Commerce>()?.Value ?? null;
-			if (value == null) {
+			if (go.ContainsFreshWater()) {
 				return null;
 			}
 
+			var value = go.Value;
 			var multiple = 1.0;
+			
 			if (!go.IsCurrency) {
 				// subtract 0.21 (3 * 0.07) because the player's reputation with themself is uncommonly high
 				multiple = GetTradePerformanceEvent.GetFor(The.Player, The.Player) - 0.21;
 			}
+
 			return value * multiple;
 		}
 		
