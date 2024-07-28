@@ -50,6 +50,22 @@ namespace Plaidman.LightenMyLoad.Menus {
 			return label;
 		}
 		
+		private static double? GetValueRatio(InventoryItem item) {
+			var weight = item.Weight;
+			var value = item.Value;
+
+			if (value == null || value <= 0) {
+				// not sellable (includes fresh water containers)
+				return null;
+			}
+			
+			if (weight == null || weight <= 0) {
+				return double.PositiveInfinity;
+			}
+
+			return (double)(value / weight);
+		}
+		
 		private static string GetValueLabel(InventoryItem item) {
 			return item.Value.ToString();
 		}
