@@ -15,13 +15,15 @@ namespace Plaidman.LightenMyLoad.Menus {
 			public IRenderable Icon { get; }
 			public int? Weight { get; }
 			public double? Value { get; }
+			public bool Known { get; }
 
-			public InventoryItem(int index, GameObject go) {
+			public InventoryItem(int index, GameObject go, bool known) {
 				Index = index;
 				DisplayName = go.DisplayName;
 				Icon = go.Render;
 				Weight = go.GetPart<Physics>()?.Weight ?? null;
 				Value = GetValue(go);
+				Known = known;
 			}
 		}
 		
@@ -68,7 +70,7 @@ namespace Plaidman.LightenMyLoad.Menus {
 		
 		private static string GetValueLabel(InventoryItem item) {
 			var ratio = GetValueRatio(item);
-
+			
 			if (ratio == null) {
 				// not sellable: grey
 				return "{{K|| |}}";
@@ -77,6 +79,11 @@ namespace Plaidman.LightenMyLoad.Menus {
 			if (double.IsPositiveInfinity((double)ratio)) {
 				// zero weight object: blue
 				return "{{b||$|}}";
+			}
+
+			if (!item.Known) {
+				// not known: yellow
+				return "{{w||?|}}";
 			}
 			
 			if (ratio < 1) {
@@ -95,7 +102,7 @@ namespace Plaidman.LightenMyLoad.Menus {
 				return "{{G||$|}}";
 			}
 
-			if (ratio < 50) {
+			if (ratio <= 50) {
 				// less than silver nugget 2x green
 				return "{{G||$$|}}";
 			}
