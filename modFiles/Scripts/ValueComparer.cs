@@ -12,8 +12,8 @@ namespace Plaidman.LightenMyLoad.Menus {
 
             return xCat switch
             {
-                1 => CompareDouble((double)x.Ratio, (double)y.Ratio),
-                3 => CompareDouble((double)x.Value, (double)y.Value),
+                1 => CompareDouble(x.Ratio ?? double.PositiveInfinity, y.Ratio ?? double.PositiveInfinity),
+                3 => CompareDouble(x.Value ?? double.PositiveInfinity, y.Value ?? double.PositiveInfinity),
                 2 or 4 => y.Weight - x.Weight,
                 _ => 0,
             };
@@ -29,21 +29,21 @@ namespace Plaidman.LightenMyLoad.Menus {
 			// 1: known items sort by ratio, lowest first
 			// 2: unknown items sort by weight, highest first
 			// 3: zero weight sort by value, lowest first
-			// 4: unsellable sort by weight, highest first
+			// 4: unsellable (water container) sort by weight, highest first
+
+			if (item.Ratio == null) {
+				return 4;
+			}
 
 			if (item.Weight <= 0) {
 				return 3;
 			}
 
-			if (item.Value == null) {
-				return 4;
-			}
-
-			if (item.Known) {
-				return 1;
+			if (!item.Known) {
+				return 2;
 			}
 			
-			return 2;
+			return 1;
 		}
 	}
 }

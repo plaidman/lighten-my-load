@@ -6,12 +6,12 @@ namespace Plaidman.LightenMyLoad.Menus {
 			
 			if (ratio == null) {
 				// not sellable: grey
-				return "{{K|| |}}";
+				return "{{K||X|}}";
 			}
 
 			if (double.IsPositiveInfinity((double)ratio)) {
 				// zero weight object: blue
-				return "{{b||$|}}";
+				return "{{b||0#|}}";
 			}
 
 			if (!item.Known) {

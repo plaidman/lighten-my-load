@@ -5,9 +5,6 @@ using Plaidman.LightenMyLoad.Menus;
 using System.Linq;
 
 // TODOs
-// zero weight items might have unknown value. figure out how best to sort it
-// display unknown items with zero weight as blue with 0#
-// 
 // key to change sort mode in list
 // adjust weight/ratio display to uniform width
 //   - is this possible?
