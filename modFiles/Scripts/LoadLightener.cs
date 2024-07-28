@@ -19,6 +19,8 @@ namespace XRL.World.Parts {
 		public static readonly string ShowValueOption = "Plaidman_LightenMyLoad_Option_AlwaysShowValue";
 		public static readonly string PreferredSortOption = "Plaidman_LightenMyLoad_Option_PreferredSort";
 		public static readonly string AbilityOption = "Plaidman_LightenMyLoad_Option_UseAbility";
+		public static readonly string PKAppraisalSkill = "PKAPP_Price";
+		public static readonly string AnEyeForValueSkill = "Plaidman_LightenMyLoad_Skill_AnEyeForValue";
 		public Guid AbilityGuid;
 		public HashSet<string> KnownItems = new(50);
 		public ItemListPopup.SortType CurrentSortType = DefaultSortType();
@@ -114,7 +116,11 @@ namespace XRL.World.Parts {
 				return true;
 			}
 			
-			if (ParentObject.HasSkill("PKAPP_Price")) {
+			if (ParentObject.HasSkill(PKAppraisalSkill)) {
+				return true;
+			}
+
+			if (ParentObject.HasSkill(AnEyeForValueSkill)) {
 				return true;
 			}
 
