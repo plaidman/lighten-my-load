@@ -5,7 +5,6 @@ using Plaidman.LightenMyLoad.Menus;
 using System.Linq;
 
 // TODOs
-// always know if option is set
 // create skill
 // show all ratio labels if you have the skill
 // figure out how to check if PKAPP skill
@@ -114,6 +113,10 @@ namespace XRL.World.Parts {
 		}
 		
 		private bool IsKnown(GameObject go) {
+			if (Options.GetOption(ShowValueOption) == "Yes") {
+				return true;
+			}
+
 			return KnownItems.Contains(go.BaseDisplayName);
 		}
 		
