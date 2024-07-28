@@ -3,43 +3,81 @@ using System.Linq;
 using XRL.UI;
 using Qud.UI;
 using ConsoleLib.Console;
-using XRL;
 
 namespace Plaidman.LightenMyLoad.Menus {
-	public class ItemList {
-		private static string GetItemLabel(bool selected, InventoryItem item, bool sortByWeight) {
+	public class ItemListPopup {
+		public enum SortType { Weight, Value };
+
+		public SortType CurrentSortType;
+		private Dictionary<SortType, InventoryItem[]> ItemListCache;
+		private readonly Dictionary<SortType, IComparer<InventoryItem>> Comparers;
+		private readonly Dictionary<SortType, string> SortStrings;
+		private readonly Dictionary<SortType, SortType> NextSortType;
+		
+		public ItemListPopup() {
+			Comparers = new() {
+				{ SortType.Value, new ValueComparer() },
+				{ SortType.Weight, new WeightComparer() },
+			};
+			SortStrings = new() {
+				{ SortType.Value, "value" },
+				{ SortType.Weight, "weight" },
+			};
+			NextSortType = new() {
+				{ SortType.Value, SortType.Weight },
+				{ SortType.Weight, SortType.Value },
+			};
+		}
+
+		private void ResetCache() {
+			ItemListCache = new() {
+				{ SortType.Value, null },
+				{ SortType.Weight, null },
+			};
+		}
+		
+		private InventoryItem[] ChangeSort(InventoryItem[] items, SortType sortType) {
+			var cache = ItemListCache.GetValue(sortType);
+			
+			if (cache == null) {
+				cache = items.OrderBy(item => item, Comparers.GetValue(sortType)).ToArray();
+				ItemListCache.Set(sortType, cache);
+			}
+			
+			return cache;
+		}
+
+		private string GetItemLabel(bool selected, InventoryItem item) {
 			var label = PopupLabelUtils.GetSelectionLabel(selected) + " ";
 			
-			if (sortByWeight) {
-				label += PopupLabelUtils.GetWeightLabel(item) + " ";
-			} else {
-				label += PopupLabelUtils.GetValueLabel(item) + " ";
+			switch (CurrentSortType) {
+				case SortType.Value:
+					label += PopupLabelUtils.GetValueLabel(item) + " ";
+					break;
+
+				case SortType.Weight:
+					label += PopupLabelUtils.GetWeightLabel(item) + " ";
+					break;
 			}
 
 			return label + item.DisplayName;
 		}
 		
-		public static int[] ShowPopup(
-			InventoryItem[] options,
-			bool sortByWeight
-		) {
+		private string GetSortLabel() {
+			return "{{W|[Tab]}} {{y|Sort Mode: " + SortStrings.GetValue(CurrentSortType) + "}}";
+		}
+		
+		public int[] ShowPopup(InventoryItem[] options) {
 			var defaultSelected = 0;
 			var weightSelected = 0;
 			var selectedItems = new HashSet<int>();
-			var sortString = "";
 			
-			if (sortByWeight) {
-				options.Sort(new WeightComparer());
-				sortString = "weight";
-			} else {
-				options.Sort(new ValueComparer());
-				sortString = "value";
-			}
-
-			IRenderable[] itemIcons = options.Select((item) => { return item.Icon; }).ToArray();
-			string[] itemLabels = options.Select((item) => {
+			ResetCache();
+			var sortedOptions = ChangeSort(options, CurrentSortType);
+			IRenderable[] itemIcons = sortedOptions.Select((item) => { return item.Icon; }).ToArray();
+			string[] itemLabels = sortedOptions.Select((item) => {
 				var selected = selectedItems.Contains(item.Index);
-				return GetItemLabel(selected, item, sortByWeight);
+				return GetItemLabel(selected, item);
 			}).ToArray();
 
 			QudMenuItem[] menuCommands = new QudMenuItem[2]
@@ -50,7 +88,7 @@ namespace Plaidman.LightenMyLoad.Menus {
 					hotkey = "D"
 				},
 				new() {
-					text = "{{W|[Tab]}} {{y|Sort Mode: " + sortString + "}}",
+					text = GetSortLabel(),
 					command = "option:-3",
 					hotkey = "Tab"
 				},
@@ -84,34 +122,28 @@ namespace Plaidman.LightenMyLoad.Menus {
 				}
 				
 				if (selectedIndex == -3) {
-					sortByWeight = !sortByWeight;
-					if (sortByWeight) {
-						options.Sort(new WeightComparer());
-						sortString = "weight";
-					} else {
-						options.Sort(new ValueComparer());
-						sortString = "value";
-					}
+					CurrentSortType = NextSortType.GetValue(CurrentSortType);
 
-					menuCommands[1].text = "{{W|[Tab]}} {{y|Sort Mode: " + sortString + "}}";
-					itemIcons = options.Select((item) => { return item.Icon; }).ToArray();
-					itemLabels = options.Select((item) => {
+					menuCommands[1].text = GetSortLabel();
+					sortedOptions = ChangeSort(options, CurrentSortType);
+					itemIcons = sortedOptions.Select((item) => { return item.Icon; }).ToArray();
+					itemLabels = sortedOptions.Select((item) => {
 						var selected = selectedItems.Contains(item.Index);
-						return GetItemLabel(selected, item, sortByWeight);
+						return GetItemLabel(selected, item);
 					}).ToArray();
 					
 					continue;
 				}
 
-				var mappedItem = options[selectedIndex];
+				var mappedItem = sortedOptions[selectedIndex];
 				if (selectedItems.Contains(mappedItem.Index)) {
 					selectedItems.Remove(mappedItem.Index);
 					weightSelected -= mappedItem.Weight;
-					itemLabels[selectedIndex] = GetItemLabel(false, mappedItem, sortByWeight);
+					itemLabels[selectedIndex] = GetItemLabel(false, mappedItem);
 				} else {
 					selectedItems.Add(mappedItem.Index);
 					weightSelected += mappedItem.Weight;
-					itemLabels[selectedIndex] = GetItemLabel(true, mappedItem, sortByWeight);
+					itemLabels[selectedIndex] = GetItemLabel(true, mappedItem);
 				}
 
 				defaultSelected = selectedIndex;

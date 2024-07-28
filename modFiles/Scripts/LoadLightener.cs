@@ -5,7 +5,7 @@ using Plaidman.LightenMyLoad.Menus;
 using System.Linq;
 
 // TODOs
-// save most recent sort selection
+// option for preferred sort type
 //
 // create skill
 // show all ratio labels if you have the skill
@@ -25,15 +25,11 @@ namespace XRL.World.Parts {
 		public static readonly string ShowValueOption = "Plaidman_LightenMyLoad_Option_AlwaysShowValue";
 		public static readonly string AbilityOption = "Plaidman_LightenMyLoad_Option_UseAbility";
 		public Guid AbilityGuid;
-		public HashSet<string> KnownItems;
-		public bool SortByWeight;
+		public HashSet<string> KnownItems = new(50);
+		public ItemListPopup.SortType CurrentSortType = ItemListPopup.SortType.Value;
+		[NonSerialized]
+		public ItemListPopup ItemPopup = new();
 		
-		public LML_LoadLightener() {
-			KnownItems = new(50);
-			KnownItems.Add("torch");
-			SortByWeight = false;
-		}
-
 		public override void Register(GameObject go, IEventRegistrar registrar) {
 			registrar.Register(CommandEvent.ID);
 			registrar.Register(AfterPlayerBodyChangeEvent.ID);
@@ -121,7 +117,9 @@ namespace XRL.World.Parts {
 				return new InventoryItem(i, go, IsKnown(go));
 			}).ToArray();
 
-			var selected = ItemList.ShowPopup(itemList, SortByWeight);
+			ItemPopup.CurrentSortType = CurrentSortType;
+			var selected = ItemPopup.ShowPopup(itemList);
+			CurrentSortType = ItemPopup.CurrentSortType;
 			if (selected == null || selected.Length == 0) {
 				Messages.MessageQueue.AddPlayerMessage("no items selected");
 				return;
