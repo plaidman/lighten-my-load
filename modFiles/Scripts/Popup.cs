@@ -67,7 +67,41 @@ namespace Plaidman.LightenMyLoad.Menus {
 		}
 		
 		private static string GetValueLabel(InventoryItem item) {
-			return item.Value.ToString();
+			var ratio = GetValueRatio(item);
+
+			if (ratio == null) {
+				// not sellable: grey
+				return "{{K|| |}}";
+			}
+
+			if (double.IsPositiveInfinity((double)ratio)) {
+				// zero weight object: blue
+				return "{{b||$|}}";
+			}
+			
+			if (ratio < 1) {
+				// super low ratio: red
+				return "{{R||$|}}";
+
+			}
+
+			if (ratio < 4) {
+				// less than water: yellow
+				return "{{W||$|}}";
+			}
+
+			if (ratio < 10) {
+				// less than copper nugget: 1x green
+				return "{{G||$|}}";
+			}
+
+			if (ratio < 50) {
+				// less than silver nugget 2x green
+				return "{{G||$$|}}";
+			}
+
+			// more than silver nugget: 3x green
+			return "{{G||$$$|}}";
 		}
 		
 		private static string GetWeightLabel(InventoryItem item) {

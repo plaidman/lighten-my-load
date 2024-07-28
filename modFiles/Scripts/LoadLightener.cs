@@ -5,9 +5,7 @@ using Plaidman.LightenMyLoad.Menus;
 using System.Linq;
 
 // TODOs
-// generate ratio label
 // show questionmark as ratio label if not in known items list
-// show ratio label in list
 // sort item list by value ratio
 // 
 // key to change sort mode in list
