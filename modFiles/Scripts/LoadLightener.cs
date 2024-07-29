@@ -4,13 +4,6 @@ using XRL.UI;
 using Plaidman.LightenMyLoad.Menus;
 using System.Linq;
 
-// TODOs
-// create skill
-// show all ratio labels if you have the skill
-//
-// adjust weight/ratio display to uniform width
-//   - is this possible?
-
 namespace XRL.World.Parts {
 	[Serializable]
 	public class LML_LoadLightener : IPlayerPart {
@@ -86,6 +79,11 @@ namespace XRL.World.Parts {
 			if (Popup.ShowYesNo("Are you sure you want to uninstall {{W|Lighten My Load}}?") == DialogResult.No) {
 				Messages.MessageQueue.AddPlayerMessage("{{W|Lighten My Load}} uninstall was cancelled.");
 				return;
+			}
+
+			if (ParentObject.HasSkill(AnEyeForValueSkill)) {
+				ParentObject.RemoveSkill(AnEyeForValueSkill);
+				Messages.MessageQueue.AddPlayerMessage("{{W|Lighten My Load}}: removed skill");
 			}
 
 			if (AbilityGuid != Guid.Empty) {
